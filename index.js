@@ -21,6 +21,11 @@ app.use(cors());
 app.use(express.json());
 
 // craer rutas
+const rutas_articulo = require("./rutas/articulo"); 
+// cargo la ruta
+app.use("/api", rutas_articulo);
+
+// rutas de prueba hardcodeadas
 app.get("/probando", (req, res) => {
 
     console.log("se ha ejecutado el endpoint probando");
