@@ -18,10 +18,11 @@ const puerto = 3900;
 app.use(cors());
 
 // convertir body a objeto js
-app.use(express.json());
+app.use(express.json()); // recibir datos con content-type app/json
+app.use(express.urlencoded({ extended: true })); // asi se pueden recibir datos de un formulario normal de html (form-url-encoded)
 
 // craer rutas
-const rutas_articulo = require("./rutas/articulo"); 
+const rutas_articulo = require("./rutas/articulo");
 // cargo la ruta
 app.use("/api", rutas_articulo);
 
