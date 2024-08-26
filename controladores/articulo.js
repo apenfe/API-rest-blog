@@ -1,3 +1,4 @@
+const { validarArticulo } = require("../helper/validar")
 const validator = require("validator");
 const Articulo = require("../modelos/Articulo");
 
@@ -39,17 +40,11 @@ const crear = (req, res) => {
     // validar los datos
     try {
 
-        let validarTitulo = !validator.isEmpty(parametros.titulo) &&
-            validator.isLength(parametros.titulo, { min: 5, max: undefined });
-        let validarContenido = !validator.isEmpty(parametros.contenido);
-
-        if (!validarContenido || !validarTitulo) {
-            throw new Error("No se ha validado la información");
-        }
+        validarArticulo(parametros);
 
     } catch (error) {
         return res.status(400).json({
-            status: "Error",
+            status: "error",
             mensaje: "Faltan datos por enviar"
         });
     }
@@ -171,13 +166,8 @@ const editar = (req, res) => {
 
     try {
 
-        let validarTitulo = !validator.isEmpty(parametros.titulo) &&
-            validator.isLength(parametros.titulo, { min: 5, max: undefined });
-        let validarContenido = !validator.isEmpty(parametros.contenido);
+        validarArticulo(parametros);
 
-        if (!validarContenido || !validarTitulo) {
-            throw new Error("No se ha validado la información");
-        }
     } catch (error) {
         return res.status(400).json({
             status: "error",
