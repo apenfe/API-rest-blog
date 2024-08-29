@@ -4,7 +4,7 @@ const { validarArticulo } = require("../helper/validar")
 const validator = require("validator");
 const Articulo = require("../modelos/Articulo");
 
-const prueba = (req, res) => {
+/*const prueba = (req, res) => {
     return res.status(200).json({
         mensaje: "Soy una accion de prueba en controlador de articulos"
     });
@@ -32,7 +32,7 @@ const curso = (req, res) => {
         },
     ]);
 
-};
+};*/
 
 const crear = (req, res) => {
 
@@ -280,50 +280,45 @@ const imagen = (req, res) => {
 
 }
 
-const buscador = (req, res) => {
-    // sacar string de la busqueda
-    let busqueda = req.params.busqueda
+const buscador = async (req, res) => {
 
+    try {
+        // Sacar el string de busqueda
+        let busqueda = req.params.busqueda
+        // Find OR y puedes aplicar expresiones reg
+        // Orden
+        // Ejecutar consulta
+        let articulos = await Articulo.find({
+            "$or": [
+                { "titulo": { "$regex": busqueda, "$options": "i" } },
+                { "contenido": { "$regex": busqueda, "$options": "i" } }
+            ]
+        }).sort({ fecha: -1 })
+            .exec()
 
-    // find or
-    Articulo.find({
-        "$or": [
-            { "titulo": { "regex": busqueda, "$options": "i" } },
-            { "contenido": { "regex": busqueda, "$options": "i" } },
-        ]
-    })
-        .sort({ fecha: -1 })
-        .exec((error, articulosEncontrados) => {
+        if (!articulos || articulos.length < 1) {
 
-            if (error || !articulosEncontrados || articulosEncontrados.length <= 0) {
-                return res.status(400).json({
-                    status: "error",
-                    mensaje: "No hay coincidencias"
-                });
-            } else {
+            return res.status(404).json({
+                status: "error",
+                mensaje: "No hay articulos que coincidan"
+            })
+        }
 
-                return res.status(200).json({
-                    status: "success",
-                    articulos: articulosEncontrados
-                });
-
-            }
-
+        return res.status(200).json({
+            status: "success",
+            articulos
         })
-    // orden
-
-    // ejecutar consulta
-
-
-    // devolver resultado
-
-
+        // Devolver resultados 
+    } catch (error) {
+        return res.status(404).json({
+            status: "error",
+            mensaje: "Fallo la algo a la hora de realizarla busqueda "
+        })
+    }
 
 }
 
 module.exports = {
-    prueba,
-    curso,
     crear,
     listar,
     uno,
